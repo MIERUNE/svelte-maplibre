@@ -285,8 +285,21 @@
     ? diffApplier((key, value) => $map?.setLayoutProperty($layer!, key, value))
     : undefined;
 
-  $: applyPaint?.(paint);
-  $: applyLayout?.(layout);
+  $: if ($map) {
+    if ($map.isStyleLoaded()) {
+      applyPaint?.(paint);
+    } else {
+      $map.once('styledata', () => applyPaint?.(paint));
+    }
+  }
+  $: if ($map) {
+    if ($map.isStyleLoaded()) {
+      applyLayout?.(layout);
+    } else {
+      $map.once('styledata', () => applyLayout?.(layout));
+    }
+  }
+
   $: if ($layer) $map?.setLayerZoomRange($layer, actualMinZoom, actualMaxZoom);
 
   // Don't set the filter again after we've just created it.
