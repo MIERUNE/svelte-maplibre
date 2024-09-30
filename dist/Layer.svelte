@@ -209,14 +209,14 @@ onDestroy(() => {
 $: applyPaint = $layer ? diffApplier((key, value) => $map?.setPaintProperty($layer, key, value)) : void 0;
 $: applyLayout = $layer ? diffApplier((key, value) => $map?.setLayoutProperty($layer, key, value)) : void 0;
 $: if ($map) {
-  if ($map.loaded()) {
+  if ($map.isStyleLoaded()) {
     applyPaint?.(paint);
   } else {
     $map.once("styledata", () => applyPaint?.(paint));
   }
 }
 $: if ($map) {
-  if ($map.loaded()) {
+  if ($map.isStyleLoaded()) {
     applyLayout?.(layout);
   } else {
     $map.once("styledata", () => applyLayout?.(layout));

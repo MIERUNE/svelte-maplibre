@@ -286,14 +286,14 @@
     : undefined;
 
   $: if ($map) {
-    if ($map.loaded()) {
+    if ($map.isStyleLoaded()) {
       applyPaint?.(paint);
     } else {
       $map.once('styledata', () => applyPaint?.(paint));
     }
   }
   $: if ($map) {
-    if ($map.loaded()) {
+    if ($map.isStyleLoaded()) {
       applyLayout?.(layout);
     } else {
       $map.once('styledata', () => applyLayout?.(layout));
