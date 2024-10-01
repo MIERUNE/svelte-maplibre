@@ -206,22 +206,22 @@ onDestroy(() => {
     unsubEvents($layer);
   }
 });
-$: applyPaint = $layer ? diffApplier((key, value) => $map?.setPaintProperty($layer, key, value)) : void 0;
-$: applyLayout = $layer ? diffApplier((key, value) => $map?.setLayoutProperty($layer, key, value)) : void 0;
-$: if ($map) {
-  if ($map.isStyleLoaded()) {
-    applyPaint?.(paint);
+$: applyPaint = $layer ? diffApplier((key, value) => {
+  if ($map?.isStyleLoaded()) {
+    $map.setPaintProperty($layer, key, value);
   } else {
-    $map.once("styledata", () => applyPaint?.(paint));
+    $map?.once("styledata", () => $map?.setPaintProperty($layer, key, value));
   }
-}
-$: if ($map) {
-  if ($map.isStyleLoaded()) {
-    applyLayout?.(layout);
+}) : void 0;
+$: applyLayout = $layer ? diffApplier((key, value) => {
+  if ($map?.isStyleLoaded()) {
+    $map.setLayoutProperty($layer, key, value);
   } else {
-    $map.once("styledata", () => applyLayout?.(layout));
+    $map?.once("styledata", () => $map?.setLayoutProperty($layer, key, value));
   }
-}
+}) : void 0;
+$: applyPaint?.(paint);
+$: applyLayout?.(layout);
 $: if ($layer) $map?.setLayerZoomRange($layer, actualMinZoom, actualMaxZoom);
 $: if ($layer) {
   if (first) {

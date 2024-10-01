@@ -279,26 +279,27 @@
   });
 
   $: applyPaint = $layer
-    ? diffApplier((key, value) => $map?.setPaintProperty($layer!, key, value))
-    : undefined;
-  $: applyLayout = $layer
-    ? diffApplier((key, value) => $map?.setLayoutProperty($layer!, key, value))
-    : undefined;
+    ? diffApplier((key, value) => {
+        if ($map?.isStyleLoaded()) {
+          $map.setPaintProperty($layer!, key, value);
+        } else {
+          $map?.once('styledata', () => $map?.setPaintProperty($layer!, key, value));
+        }
+      })
+    : void 0;
 
-  $: if ($map) {
-    if ($map.isStyleLoaded()) {
-      applyPaint?.(paint);
-    } else {
-      $map.once('styledata', () => applyPaint?.(paint));
-    }
-  }
-  $: if ($map) {
-    if ($map.isStyleLoaded()) {
-      applyLayout?.(layout);
-    } else {
-      $map.once('styledata', () => applyLayout?.(layout));
-    }
-  }
+  $: applyLayout = $layer
+    ? diffApplier((key, value) => {
+        if ($map?.isStyleLoaded()) {
+          $map.setLayoutProperty($layer!, key, value);
+        } else {
+          $map?.once('styledata', () => $map?.setLayoutProperty($layer!, key, value));
+        }
+      })
+    : void 0;
+
+  $: applyPaint?.(paint);
+  $: applyLayout?.(layout);
 
   $: if ($layer) $map?.setLayerZoomRange($layer, actualMinZoom, actualMaxZoom);
 
